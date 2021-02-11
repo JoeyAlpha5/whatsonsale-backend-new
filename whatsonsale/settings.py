@@ -25,7 +25,7 @@ SECRET_KEY = '_ucj-(&kqh0e&+bf-6v(g$-al3-&t@*mg-5bu$nwcmw_-6thaz'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,18 +37,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+
+# cors
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'POST',
+]
+
+
 
 ROOT_URLCONF = 'whatsonsale.urls'
 
@@ -76,8 +88,12 @@ WSGI_APPLICATION = 'whatsonsale.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'testDatabase',
+        'USER': 'admin',
+        'PASSWORD': 'BH6B0oJ9OUgVooHxL5Hh',
+        'HOST': 'aws-test-database.cyyr3cnemovj.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
     }
 }
 
