@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import brand
+from .models import brand, userAccount
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def getFeed(request):
@@ -22,9 +22,14 @@ def getSearchPageData(request):
 # create account
 @csrf_exempt
 def createAccount(request):
-    post_name = request.POST.get("name")
-    print(post_name)
-    return JsonResponse({"data":post_name})
+    name = request.POST.get("name")
+    email = request.POST.get("email")
+    mobile = request.POST.get("mobile")
+    user_id = request.POST.get("user_id")
+
+    new_user = userAccount(user_id=user_id,name=name, email=email,mobile_number=mobile)
+    new_user.save()
+    return JsonResponse({"response":"account created"})
 
 # delete account
 
