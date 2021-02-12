@@ -87,6 +87,7 @@ WSGI_APPLICATION = 'whatsonsale.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
+    # test database
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'testDatabase',
