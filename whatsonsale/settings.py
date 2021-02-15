@@ -86,6 +86,7 @@ WSGI_APPLICATION = 'whatsonsale.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+# database and storage
 DATABASES = {
     # test database
     'default': {

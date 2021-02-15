@@ -8,12 +8,17 @@ def getFeed(request):
 
 # get default search page brands
 def getSearchPageData(request):
+    search_input = request.GET["searchInput"]
     brand_list = []
-    get_brands = brand.objects.all()[:10]
+    if request.GET['searchCategory'] != "":
+        get_brands = brand.objects.filter(name__icontains=search_input,category=request.GET["searchCategory"])
+    else:
+        get_brands = brand.objects.filter(name__icontains=search_input)
     for item in get_brands:
-        brand_object = {"name":item.name, "description":item.description, "category":item.category,"logo":item.logo, "website":item.website}
+        brand_object = {"id":item.id,"name":item.name, "description":item.description, "category":item.category,"logo":item.logo, "website":item.website}
         brand_list.append(brand_object)
     return JsonResponse({"data":brand_list})
+
 
 # get trends
 
