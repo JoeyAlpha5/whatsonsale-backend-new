@@ -91,9 +91,11 @@ def followBrand(request):
     user_id = request.GET["userId"]
     get_brand = brand.objects.get(id=brand_id)
     get_user = userAccount.objects.get(user_id=user_id)
+    # unfollow brand
     if userFollowing.objects.filter(brand =get_brand,user=get_user).exists():
         userFollowing.objects.filter(brand =get_brand,user=get_user).delete()
-        # following.delete()
+    
+    # follow brand
     else:
         new_following = userFollowing()
         new_following.brand = get_brand
@@ -104,7 +106,6 @@ def followBrand(request):
 
 
 
-# unfollow brand
 
 # create basket
 
@@ -116,4 +117,3 @@ def followBrand(request):
 
 # send notification
 
-# verify firebase auth
