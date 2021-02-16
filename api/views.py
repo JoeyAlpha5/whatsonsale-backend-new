@@ -105,6 +105,19 @@ def followBrand(request):
     return JsonResponse({"data":"success"})
 
 
+# get the brands that the user follows
+def getFollowing(request):
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+    brands_followed = userFollowing.objects.filter(user=get_user)
+    brands_array = []
+    for item in brands_followed:
+        brand = item.brand
+        followers_count = userFollowing.objects.filter(brand=brand).count()
+        post_count = post.objects.filter(brand=brand).count()
+        brand_object = {"id":brand.id,"name":brand.name, "description":brand.description, "category":brand.category,"logo":brand.logo, "website":brand.website,"following":True,"post_count":post_count,"follower_count":followers_count}
+        brands_array.append(brand_object)
+    return JsonResponse({"data":brands_array})
 
 
 # create basket
