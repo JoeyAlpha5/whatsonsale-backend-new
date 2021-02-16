@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import brand, userAccount
+from .models import brand, userAccount, userFollowing, post
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def getFeed(request):
@@ -9,16 +9,23 @@ def getFeed(request):
 # get default search page brands
 def getSearchPageData(request):
     search_input = request.GET["searchInput"]
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
     brand_list = []
     if request.GET['searchCategory'] != "":
         get_brands = brand.objects.filter(name__icontains=search_input,category=request.GET["searchCategory"])
     else:
         get_brands = brand.objects.filter(name__icontains=search_input)
     for item in get_brands:
-        brand_object = {"id":item.id,"name":item.name, "description":item.description, "category":item.category,"logo":item.logo, "website":item.website}
+        # check if user follows this brand
+        user_follows = userFollowing.objects.filter(brand=item, user=get_user).exists()
+        # get the brand stats
+        followers_count = userFollowing.objects.filter(brand=item).count()
+        post_count = post.objects.filter(brand=item).count()
+        # 
+        brand_object = {"id":item.id,"name":item.name, "description":item.description, "category":item.category,"logo":item.logo, "website":item.website,"following":user_follows,"post_count":post_count,"follower_count":followers_count}
         brand_list.append(brand_object)
     return JsonResponse({"data":brand_list})
-
 
 # get trends
 
@@ -39,8 +46,32 @@ def createAccount(request):
 # delete account
 
 # get account details
+def getAccount(request):
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+    user_details = {"name":get_user.name,"email":get_user.email,"image":get_user.profile_image,"accept_shared_baskets":get_user.accept_shared_baskets,"mobile":get_user.mobile_number}
+    return JsonResponse({"data":user_details})
 
 # update account
+@csrf_exempt
+def updateAccount(request):
+    name = request.POST.get("name")
+    email = request.POST.get("email")
+    mobile = request.POST.get("mobile")
+    user_id = request.POST.get("userId")
+    accept_shared_baskets = request.POST.get("accept_shared_baskets")
+
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_user.name = name
+    get_user.email = email
+    get_user.mobile = mobile
+    if accept_shared_baskets == "false":
+        get_user.accept_shared_baskets = False
+    else:
+        get_user.accept_shared_baskets = True
+    get_user.save()
+
+    return JsonResponse({"data":"success"})
 
 # create post
 
@@ -55,6 +86,23 @@ def createAccount(request):
 # create post view
 
 # follow brand
+def followBrand(request):
+    brand_id = request.GET["id"]
+    user_id = request.GET["userId"]
+    get_brand = brand.objects.get(id=brand_id)
+    get_user = userAccount.objects.get(user_id=user_id)
+    if userFollowing.objects.filter(brand =get_brand,user=get_user).exists():
+        userFollowing.objects.filter(brand =get_brand,user=get_user).delete()
+        # following.delete()
+    else:
+        new_following = userFollowing()
+        new_following.brand = get_brand
+        new_following.user = get_user
+        new_following.save()
+
+    return JsonResponse({"data":"success"})
+
+
 
 # unfollow brand
 

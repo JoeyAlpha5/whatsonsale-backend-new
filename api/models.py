@@ -3,6 +3,7 @@ from datetime import datetime
 category_choices = [("Clothing","Clothing"), ("Home Care", "Home Care"), ("Electronics", "Electronics"),("Restuarants","Restuarants"),("Banks","Banks"),("Entertainment", "Entertainment")]
 product_choices = [("---", "---"),("Denim","Denim"), ("Food", "Food"), ("Jackets", "Jackets"), ("Sneakers", "Sneakers"),("Bags","Bags"),("T-shirt","T-shirt"),("Shoes","Shoes"),("Electronics","Electronics")]
 # Create your models here.
+
 class userAccount(models.Model):
     user_id = models.CharField(max_length=250)
     name = models.CharField(max_length=100)
@@ -13,6 +14,8 @@ class userAccount(models.Model):
     date = models.DateTimeField(default=datetime.now)
     # welcome_message = models.BooleanField(default=False)
     objects = models.Manager()
+    def __str__(self):
+        return self.name
 
 class brand(models.Model):
     name = models.CharField(max_length=100)
@@ -21,6 +24,8 @@ class brand(models.Model):
     logo = models.URLField()
     website = models.URLField()
     objects = models.Manager()
+    def __str__(self):
+        return self.name
 
 class post(models.Model):
     title = models.CharField(max_length=50) 
@@ -31,11 +36,15 @@ class post(models.Model):
     date = models.DateTimeField(auto_now_add=True )
     active = models.BooleanField(default=True)
     objects = models.Manager()
+    def __str__(self):
+        return self.title
 
 class postCatalogue(models.Model):
     post = models.ForeignKey(post, on_delete=models.CASCADE)
     image = models.URLField()
     objects = models.Manager()
+    def __str__(self):
+        return self.post.title
 
 class postProduct(models.Model):
     name = models.CharField(max_length=150)
@@ -46,24 +55,32 @@ class postProduct(models.Model):
     product_type = models.CharField(choices=product_choices, max_length=50, default="")
     image = models.URLField()
     objects = models.Manager()
+    def __str__(self):
+        return self.name
 
 class postLike(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     post = models.ForeignKey(post, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     objects = models.Manager()
+    def __str__(self):
+        return self.user.name
 
 class postView(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     post = models.ForeignKey(post, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     objects = models.Manager()
+    def __str__(self):
+        return self.user.name
 
 class userFollowing(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     brand = models.ForeignKey(brand, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     objects = models.Manager()
+    def __str__(self):
+        return self.user.name
 
 class news(models.Model):
     news_headline = models.CharField(max_length=150)
@@ -72,11 +89,15 @@ class news(models.Model):
     news_image = models.DateTimeField(default=datetime.now)
     news_date = models.DateTimeField(auto_now_add=True )
     objects = models.Manager()
+    def __str__(self):
+        return self.news_headline
 
 class basket(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     product = models.ForeignKey(postProduct, on_delete=models.CASCADE)
     objects = models.Manager()
+    def __str__(self):
+        return self.user.name
 
 
 class basketShare(models.Model):
@@ -84,3 +105,5 @@ class basketShare(models.Model):
     basket_friend = models.CharField(max_length=150)
     viewed_by_friend = models.BooleanField()
     objects = models.Manager()
+    def __str__(self):
+        return self.basket_owner.name
