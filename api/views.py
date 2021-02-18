@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse
-from .models import brand, userAccount, userFollowing, post
+from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def getFeed(request):
@@ -73,7 +73,23 @@ def updateAccount(request):
 
     return JsonResponse({"data":"success"})
 
-# create post
+# get brand post gallery 
+def getBrandPosts(request):
+    brand_id = request.GET["brandId"]
+    get_brand = brand.objects.get(id=brand_id)
+    get_posts = post.objects.filter(brand=get_brand)
+    posts_array = []
+    for item in get_posts:
+        post_likes_count = postLike.objects.filter(post=item).count()
+        post_views_count = postView.objects.filter(post=item).count()
+        post_comments_count = postComment.objects.filter(post=item).count()
+        post_products_count = postProduct.objects.filter(post=item).count()
+        post_data = {"postId":item.id,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":brand_id,"date":item.date}
+        posts_array.append(post_data)
+
+    return JsonResponse({"data":posts_array})
+
+#  create post
 
 # create post catalogue
 
@@ -92,9 +108,8 @@ def followBrand(request):
     get_brand = brand.objects.get(id=brand_id)
     get_user = userAccount.objects.get(user_id=user_id)
     # unfollow brand
-    if userFollowing.objects.filter(brand =get_brand,user=get_user).exists():
-        userFollowing.objects.filter(brand =get_brand,user=get_user).delete()
-    
+    if userFollowing.objects.filter(brand=get_brand,user=get_user).exists():
+        userFollowing.objects.filter(brand=get_brand,user=get_user).delete()
     # follow brand
     else:
         new_following = userFollowing()

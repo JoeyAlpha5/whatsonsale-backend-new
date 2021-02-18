@@ -1,6 +1,6 @@
 
 from django.contrib import admin
-from .models import userAccount,basketShare,postProduct, brand, userFollowing,basket, postCatalogue,postLike, postView, news,post
+from .models import userAccount,basketShare,postProduct, brand, userFollowing,basket, postCatalogue,postLike, postView, news,post, postComment
 # Register your models here.
 
 class brandAdmin(admin.ModelAdmin):
@@ -8,7 +8,7 @@ class brandAdmin(admin.ModelAdmin):
     ordering = ['name']
 
 class productAdmin(admin.ModelAdmin):
-    list_display = ['name','price', 'post','product_type']
+    list_display = ['name','price', 'post']
 
 
 class postAdmin(admin.ModelAdmin):
@@ -32,6 +32,9 @@ class viewAdmin(admin.ModelAdmin):
 class likeAdmin(admin.ModelAdmin):
     list_display = ['user','post', 'date']
 
+class commentAdmin(admin.ModelAdmin):
+    list_display = ['user','post', 'date']
+
 admin.site.register(userAccount, userAccountAdmin)
 admin.site.register(postProduct, productAdmin)
 admin.site.register(post, postAdmin)
@@ -39,6 +42,7 @@ admin.site.register(userFollowing,followAdmin)
 admin.site.register(brand, brandAdmin)
 admin.site.register(postLike,likeAdmin)
 admin.site.register(postView,viewAdmin)
+admin.site.register(postComment,commentAdmin)
 admin.site.register(postCatalogue)
 admin.site.register(basket)
 admin.site.register(basketShare, basketShareAdmin)

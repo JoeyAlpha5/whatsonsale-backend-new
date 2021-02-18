@@ -48,11 +48,11 @@ class postCatalogue(models.Model):
 
 class postProduct(models.Model):
     name = models.CharField(max_length=150)
-    previous_price = models.FloatField()
+    previous_price = models.FloatField(blank=True,default=0)
     ##sale price
     price = models.FloatField()
     post = models.ForeignKey(post, on_delete=models.CASCADE)
-    product_type = models.CharField(choices=product_choices, max_length=50, default="")
+    # product_type = models.CharField(choices=product_choices, max_length=50, default="")
     image = models.URLField()
     objects = models.Manager()
     def __str__(self):
@@ -73,6 +73,16 @@ class postView(models.Model):
     objects = models.Manager()
     def __str__(self):
         return self.user.name
+
+class postComment(models.Model):
+    user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
+    post = models.ForeignKey(post, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now)
+    comment = models.CharField(max_length=150)
+    objects = models.Manager()
+    def __str__(self):
+        return self.user.name
+
 
 class userFollowing(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
