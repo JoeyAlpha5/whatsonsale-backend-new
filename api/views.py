@@ -1,10 +1,47 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+from django.core.serializers import serialize
 from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def getFeed(request):
-    return JsonResponse({"hello": "world"})
+    user_id = request.GET["userId"]
+    feed_count = int(request.GET["feedCount"])
+    get_user = userAccount.objects.get(user_id=user_id)
+    brands_followed = userFollowing.objects.filter(user=get_user)
+    followed_brands = []
+    posts_array = []
+    # push array of followed brands
+    for following in brands_followed:
+        followed_brands.append(following.brand)
+    # get posts of brands that are in followed list
+    posts = post.objects.filter(brand__in=followed_brands).order_by('-id')[feed_count:feed_count+5]
+    for item in posts:
+        # check if the user has liked the post
+        user_liked_post = postLike.objects.filter(user=get_user,post=item).exists()
+        # check if the user has viewed the post
+        post_likes_count = postLike.objects.filter(post=item).count()
+        post_views_count = postView.objects.filter(post=item).count()
+        post_comments_count = postComment.objects.filter(post=item).count()
+        post_products_count = postProduct.objects.filter(post=item).count()
+        post_catalogue_count = postCatalogue.objects.filter(post=item).count()
+        # if count is more than 1
+        if post_catalogue_count > 0:
+            # get all the catalogues for the slide
+            post_catalogue = serialize("json", postCatalogue.objects.filter(post=item))
+        else:
+            post_catalogue = []
+
+        # get brand data
+        brand = item.brand
+        followers_count = userFollowing.objects.filter(brand=brand).count()
+        post_count = post.objects.filter(brand=brand).count()
+        brand_object = {"id":brand.id,"name":brand.name, "description":brand.description, "category":brand.category,"logo":brand.logo, "website":brand.website,"following":True,"post_count":post_count,"follower_count":followers_count}
+
+        post_data = { "post":{"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":item.brand.id,"date":item.date,"catalogue":post_catalogue},"brand":brand_object}
+        posts_array.append(post_data)
+
+    return JsonResponse({"data":posts_array})
 
 # get default search page brands
 def getSearchPageData(request):
@@ -76,15 +113,28 @@ def updateAccount(request):
 # get brand post gallery 
 def getBrandPosts(request):
     brand_id = request.GET["brandId"]
+    user_id = request.GET["userId"]
     get_brand = brand.objects.get(id=brand_id)
     get_posts = post.objects.filter(brand=get_brand)
+    get_user = userAccount.objects.get(user_id=user_id)
     posts_array = []
     for item in get_posts:
+        # check if the user has liked the post
+        user_liked_post = postLike.objects.filter(user=get_user,post=item).exists()
+        # check if the user has viewed the post
         post_likes_count = postLike.objects.filter(post=item).count()
         post_views_count = postView.objects.filter(post=item).count()
         post_comments_count = postComment.objects.filter(post=item).count()
         post_products_count = postProduct.objects.filter(post=item).count()
-        post_data = {"postId":item.id,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":brand_id,"date":item.date}
+        post_catalogue_count = postCatalogue.objects.filter(post=item).count()
+        # if count is more than 1
+        if post_catalogue_count > 0:
+            # get all the catalogues for the slide
+            post_catalogue = serialize("json", postCatalogue.objects.filter(post=item))
+        else:
+            post_catalogue = []
+    
+        post_data = {"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":brand_id,"date":item.date,"catalogue":post_catalogue}
         posts_array.append(post_data)
 
     return JsonResponse({"data":posts_array})
@@ -96,6 +146,23 @@ def getBrandPosts(request):
 # create post product
 
 # create post like
+@csrf_exempt
+def Like(request):
+    user_id = request.POST.get("userId")
+    post_id = request.POST.get("postId")
+    get_post = post.objects.get(id=post_id)
+    get_user = userAccount.objects.get(user_id=user_id)
+    user_liked_post = postLike.objects.filter(user=get_user,post=get_post).exists()
+    if user_liked_post == True:
+        postLike.objects.filter(user=get_user,post=get_post).delete()
+    else:
+        new_post_like = postLike()
+        new_post_like.user = get_user
+        new_post_like.post = get_post
+        new_post_like.save()
+
+    return JsonResponse({"data":"success"})
+
 
 # delete post like
 
