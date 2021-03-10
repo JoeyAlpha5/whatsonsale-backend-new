@@ -245,7 +245,7 @@ def getBasket(request):
     get_basket = basket.objects.filter(user=get_user)
     products_array = []
     for item in get_basket:
-        data = {"name": item.product.name,"price":item.product.price,"image":item.product.image,"brand_logo":item.product.post.brand.logo}
+        data = {"id":item.id,"name": item.product.name,"price":item.product.price,"image":item.product.image,"brand_logo":item.product.post.brand.logo}
         products_array.append(data)
     return JsonResponse({"data":products_array})
 
