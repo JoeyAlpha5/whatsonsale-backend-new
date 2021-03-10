@@ -202,6 +202,29 @@ def getFollowing(request):
     return JsonResponse({"data":brands_array})
 
 
+
+# get post products
+def getPostProducts(request):
+    post_id = request.GET["postId"]
+    userId = request.GET["userId"]
+    # check if user exists
+    user_exists = userExists(userId)
+
+    if user_exists == True:
+        get_post = post.objects.get(id=post_id)
+        get_products = serialize("json",postProduct.objects.filter(post=get_post))
+        return JsonResponse({"data":get_products})
+    else:
+        return JsonResponse({"data":"N/A"})
+
+
+    
+    
+    
+
+    
+        
+
 # create basket
 
 # delete basket
@@ -212,3 +235,8 @@ def getFollowing(request):
 
 # send notification
 
+
+
+def userExists(userId):
+    user_exists = userAccount.objects.filter(user_id=userId).exists()
+    return user_exists
