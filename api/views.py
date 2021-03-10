@@ -249,6 +249,22 @@ def getBasket(request):
         products_array.append(data)
     return JsonResponse({"data":products_array})
 
+
+# remove item from basket
+def removeFromBasket(request):
+    user_id = request.GET["userId"]
+    basket_id = request.GET["basketId"]
+    user_exists = userExists(user_id)
+
+    if user_exists == True:
+        get_basket = basket.objects.get(id=basket_id)
+        get_basket.delete()
+        return JsonResponse({"data":"success"})
+    else:
+        return JsonResponse({"data":"N/A"})
+
+    
+
 # share basket
 
 # unshare basket
