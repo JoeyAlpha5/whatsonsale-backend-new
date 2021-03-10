@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.serializers import serialize
-from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct
+from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct,basket
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 def getFeed(request):
@@ -218,14 +218,25 @@ def getPostProducts(request):
         return JsonResponse({"data":"N/A"})
 
 
-    
-    
-    
+# add to basket
+@csrf_exempt
+def addToBasket(request):
+    user_id = request.POST.get("userId")
+    product_id = request.POST.get("productId")
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_product = postProduct.objects.get(id=product_id)
 
-    
-        
+    # product exists in basket
+    product_exists_in_basket = basket.objects.filter(user=get_user,product=get_product).exists()
 
-# create basket
+    if product_exists_in_basket == True:
+        return JsonResponse({"data":"Product already in basket"})
+    else:
+        new_product_in_basket = basket()
+        new_product_in_basket.user = get_user
+        new_product_in_basket.product =get_product
+        new_product_in_basket.save()
+        return JsonResponse({"data":"Product added in basket"})
 
 # delete basket
 
