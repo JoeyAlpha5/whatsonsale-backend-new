@@ -1,0 +1,1 @@
+web: gunicorn whatsonsale.wsgi
