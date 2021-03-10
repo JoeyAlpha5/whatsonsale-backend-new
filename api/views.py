@@ -238,7 +238,16 @@ def addToBasket(request):
         new_product_in_basket.save()
         return JsonResponse({"data":"Product added in basket"})
 
-# delete basket
+# get basket
+def getBasket(request):
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_basket = basket.objects.filter(user=get_user)
+    products_array = []
+    for item in get_basket:
+        data = {"name": item.product.name,"price":item.product.price,"image":item.product.image,"brand_logo":item.product.post.brand.logo}
+        products_array.append(data)
+    return JsonResponse({"data":products_array})
 
 # share basket
 
