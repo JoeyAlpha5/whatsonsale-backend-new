@@ -101,6 +101,12 @@ DATABASES = {
 }
 
 
+# storages
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_ACCESS_KEY_ID = 'AKIATQ3SV6NRNYKVJGOS'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'whatsonsale-development'
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
