@@ -86,7 +86,7 @@ def createAccount(request):
 def getAccount(request):
     user_id = request.GET["userId"]
     get_user = userAccount.objects.get(user_id=user_id)
-    user_details = {"name":get_user.name,"email":get_user.email,"image":get_user.profile_image,"accept_shared_baskets":get_user.accept_shared_baskets,"mobile":get_user.mobile_number}
+    user_details = {"name":get_user.name,"email":get_user.email,"image":str(get_user.profile_image),"accept_shared_baskets":get_user.accept_shared_baskets,"mobile":get_user.mobile_number}
     return JsonResponse({"data":user_details})
 
 # update account
