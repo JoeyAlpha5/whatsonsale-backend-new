@@ -8,7 +8,7 @@ class userAccount(models.Model):
     user_id = models.CharField(max_length=250)
     name = models.CharField(max_length=100)
     email = models.CharField(max_length=100)
-    profile_image = models.FileField(upload_to="profilePic")
+    profile_image = models.FileField(upload_to="profilePic",blank=True)
     accept_shared_baskets = models.BooleanField(default=True)
     mobile_number = models.BigIntegerField(default=0)
     date = models.DateTimeField(default=datetime.now)
