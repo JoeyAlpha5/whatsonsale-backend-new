@@ -123,6 +123,13 @@ def updateProfileImage(request):
     return  JsonResponse({"profile_image":str(get_user.profile_image)})
 
 
+def getProfileImage(request):
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+    return  JsonResponse({"profile_image":str(get_user.profile_image)})
+
+
+
 # get brand post gallery 
 def getBrandPosts(request):
     brand_id = request.GET["brandId"]
