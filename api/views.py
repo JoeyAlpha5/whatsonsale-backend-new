@@ -114,13 +114,13 @@ def updateAccount(request):
 @csrf_exempt
 def updateProfileImage(request):
     user_id = request.POST.get("userId")
-    _file = request.FILES["photo"]
+    _file = request.FILES["profile_image"]
 
     get_user = userAccount.objects.get(user_id=user_id)
     get_user.profile_image = _file
     get_user.save()
 
-    JsonResponse({"profile_image":str(get_user.profile_image)})
+    return  JsonResponse({"profile_image":str(get_user.profile_image)})
 
 
 # get brand post gallery 
