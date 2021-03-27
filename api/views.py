@@ -89,6 +89,11 @@ def getAccount(request):
     user_details = {"name":get_user.name,"email":get_user.email,"image":str(get_user.profile_image),"accept_shared_baskets":get_user.accept_shared_baskets,"mobile":get_user.mobile_number}
     return JsonResponse({"data":user_details})
 
+def getUserByNumber(request):
+    user_number = request.GET["user_number"]
+    get_user = userAccount.objects.filter(mobile_number__icontains=user_number)
+    return JsonResponse({"data":serialize("json",get_user)})
+
 # update account
 @csrf_exempt
 def updateAccount(request):
