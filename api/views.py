@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.serializers import serialize
-from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct,basket
+from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct,basket,basketShare
 from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
 # Create your views here.
 def getFeed(request):
     user_id = request.GET["userId"]
@@ -92,13 +93,55 @@ def getAccount(request):
 # get a user's profile using their mobile number
 def getUserByNumber(request):
     user_number = request.GET["user_number"]
-    does_number_exist = userAccount.objects.filter(mobile_number__icontains=user_number).exists()
+    does_number_exist = userAccount.objects.filter(mobile_number__icontains=user_number,accept_shared_baskets=True).exists()
     if does_number_exist == True:
         get_user = userAccount.objects.get(mobile_number__icontains=user_number)
-        data = [{"profile_image":str(get_user.profile_image),"name":get_user.name,"mobile_number":get_user.mobile_number}]
+        data = [{"profile_image":str(get_user.profile_image),"name":get_user.name,"mobile_number":get_user.mobile_number,"user_id":get_user.user_id}]
     else:
         data = []
     return JsonResponse({"data":data})
+
+# share basket
+@csrf_exempt
+def shareBasket(request):
+    user_id = request.POST["userId"]
+    friend_id = request.POST["friendId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_friend = userAccount.objects.get(user_id=friend_id)
+
+    # check if basket exists already
+    basket_exists = basketShare.objects.filter(basket_friend=get_friend,basket_owner=get_user).exists()
+    if basket_exists == True:
+        share_status = "Basket already shared."
+    else:
+        new_basket_share = basketShare()
+        new_basket_share.basket_friend = get_friend
+        new_basket_share.basket_owner = get_user
+        new_basket_share.viewed_by_friend = True
+        new_basket_share.save()
+        share_status = "Basket shared successfuly"
+    
+    return JsonResponse({"response":share_status})
+
+# get a user's shared baskets 
+def getSharedBaskets(request):
+    user_id = request.GET["userId"]
+    get_user = userAccount.objects.get(user_id=user_id)
+
+    # get all the shared baskets related to these user
+    get_baskets = basketShare.objects.filter(Q(basket_friend=get_user) | Q(basket_owner=get_user))
+    for item in get_baskets:
+        data = {"basket_friend":item.basket_friend,"owner":item.basket_owner.name,"shared_basket_id":item.id}
+
+    return JsonResponse({"data":data})
+
+# delete shared basket
+def deleteSharedBasket(request):
+    shared_basket_id = request.GET["shared_basket_id"]
+    get_shared_basket = basketShare.objects.get(id=shared_basket_id)
+    get_shared_basket.delete()
+
+    return JsonResponse({"response":"success"})
 
 # update account
 @csrf_exempt
