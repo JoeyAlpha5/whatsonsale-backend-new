@@ -92,12 +92,13 @@ def getAccount(request):
 # get a user's profile using their mobile number
 def getUserByNumber(request):
     user_number = request.GET["user_number"]
-    get_user = userAccount.objects.filter(mobile_number__icontains=user_number)
-    if len(get_user) == 0:
-        get_user = []
+    does_number_exist = userAccount.objects.filter(mobile_number__icontains=user_number).exists()
+    if does_number_exist == True:
+        get_user = userAccount.objects.get(mobile_number__icontains=user_number)
+        data = {"profile_image":str(get_user.profile_image),"name":get_user.name,"mobile_number":get_user.mobile_number}
     else:
-        print(get_user)
-    return JsonResponse({"data":serialize("json",get_user)})
+        data = []
+    return JsonResponse({"data":data})
 
 # update account
 @csrf_exempt
