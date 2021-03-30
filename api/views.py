@@ -127,13 +127,14 @@ def shareBasket(request):
 def getSharedBaskets(request):
     user_id = request.GET["userId"]
     get_user = userAccount.objects.get(user_id=user_id)
-
+    shared_baskets_array = []
     # get all the shared baskets related to these user
     get_baskets = basketShare.objects.filter(Q(basket_friend=get_user) | Q(basket_owner=get_user))
     for item in get_baskets:
         data = {"basket_friend":item.basket_friend,"owner":item.basket_owner.name,"shared_basket_id":item.id}
+        shared_baskets_array.append(shared_baskets_array)
 
-    return JsonResponse({"data":data})
+    return JsonResponse({"data":shared_baskets_array})
 
 # delete shared basket
 def deleteSharedBasket(request):
