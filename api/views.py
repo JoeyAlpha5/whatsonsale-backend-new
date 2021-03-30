@@ -131,7 +131,7 @@ def getSharedBaskets(request):
     # get all the shared baskets related to these user
     get_baskets = basketShare.objects.filter(Q(basket_friend=get_user) | Q(basket_owner=get_user))
     for item in get_baskets:
-        data = {"basket_friend":item.basket_friend,"owner":item.basket_owner.name,"shared_basket_id":item.id}
+        data = {"basket_friend":item.basket_friend,"owner":item.basket_owner.name,"shared_basket_id":item.id,"owner_user_id":item.basket_owner.user_id}
         shared_baskets_array.append(data)
 
     return JsonResponse({"data":shared_baskets_array})
