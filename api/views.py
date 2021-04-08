@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.core.serializers import serialize
 from .models import brand, userAccount, userFollowing, post,postLike,postComment,postCatalogue,postView,postProduct,basket,basketShare
 from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Q
+from django.db.models import Q, Count
 # Create your views here.
 def getFeed(request):
     user_id = request.GET["userId"]
@@ -42,7 +42,43 @@ def getFeed(request):
         post_data = { "post":{"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":item.brand.id,"date":item.date,"catalogue":post_catalogue},"brand":brand_object}
         posts_array.append(post_data)
 
-    return JsonResponse({"data":posts_array})
+    # get trending posts
+    trending_posts = getTrends(user_id)
+
+    return JsonResponse({"data":posts_array,"trending_posts":trending_posts})
+
+# get trends
+def getTrends(userId):
+    posts_array = []
+    get_user = userAccount.objects.get(user_id=userId)
+    trending_posts = post.objects.annotate(postLike_count=Count('postlike'))[:6]
+    for item in trending_posts:
+        # check if the user has liked the post
+        user_liked_post = postLike.objects.filter(user=get_user,post=item).exists()
+        # check if the user has viewed the post
+        post_likes_count = postLike.objects.filter(post=item).count()
+        post_views_count = postView.objects.filter(post=item).count()
+        post_comments_count = postComment.objects.filter(post=item).count()
+        post_products_count = postProduct.objects.filter(post=item).count()
+        post_catalogue_count = postCatalogue.objects.filter(post=item).count()
+        # if count is more than 1
+        if post_catalogue_count > 0:
+            # get all the catalogues for the slide
+            post_catalogue = serialize("json", postCatalogue.objects.filter(post=item))
+        else:
+            post_catalogue = []
+
+        # get brand data
+        brand = item.brand
+        followers_count = userFollowing.objects.filter(brand=brand).count()
+        post_count = post.objects.filter(brand=brand).count()
+        brand_object = {"id":brand.id,"name":brand.name, "description":brand.description, "category":brand.category,"logo":brand.logo, "website":brand.website,"following":True,"post_count":post_count,"follower_count":followers_count}
+
+        post_data = { "post":{"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":item.brand.id,"date":item.date,"catalogue":post_catalogue},"brand":brand_object}
+        posts_array.append(post_data)
+
+    return posts_array
+
 
 # get default search page brands
 def getSearchPageData(request):
@@ -339,11 +375,7 @@ def removeFromBasket(request):
     else:
         return JsonResponse({"data":"N/A"})
 
-    
 
-# share basket
-
-# unshare basket
 
 # send notification
 

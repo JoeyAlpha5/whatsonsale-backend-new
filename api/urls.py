@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path
-from .views import getFeed,Like ,getSearchPageData,createAccount, followBrand, getAccount, updateAccount, getFollowing,getBrandPosts,getPostProducts,addToBasket,getBasket,removeFromBasket,updateProfileImage,getProfileImage,getUserByNumber,shareBasket,getSharedBaskets,deleteSharedBasket
+from .views import getFeed,Like ,getSearchPageData,createAccount, followBrand, getAccount, updateAccount, getFollowing,getBrandPosts,getPostProducts,addToBasket,getBasket,removeFromBasket,updateProfileImage,getProfileImage,getUserByNumber,shareBasket,getSharedBaskets,deleteSharedBasket,getTrends
 urlpatterns = [
     path('getFeed', getFeed),
     path('searchPage', getSearchPageData),
@@ -20,5 +20,6 @@ urlpatterns = [
     path("getUserByNumber",getUserByNumber),
     path('shareBasket',shareBasket),
     path("getSharedBaskets",getSharedBaskets),
-    path("deleteSharedBasket",deleteSharedBasket)
+    path("deleteSharedBasket",deleteSharedBasket),
+    path("getTrends",getTrends)
 ]
