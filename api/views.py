@@ -385,6 +385,19 @@ def removeFromBasket(request):
         return JsonResponse({"data":"N/A"})
 
 
+# get more comments
+def getComments(request):
+    post_id = request.GET["post_id"]
+    get_post = post.objects.get(id=post_id)
+    get_comments = postComment.objects.filter(post=get_post)
+    comments_array = []
+    for comment in get_comments:
+        comment_data = {"user":comment.user.name,"comment":comment.comment}
+        comments_array.append(comment_data)
+
+    return JsonResponse({"data":comments_array})
+
+
 
 # send notification
 
