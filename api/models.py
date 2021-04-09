@@ -7,6 +7,7 @@ product_choices = [("---", "---"),("Denim","Denim"), ("Food", "Food"), ("Jackets
 class userAccount(models.Model):
     user_id = models.CharField(max_length=250)
     name = models.CharField(max_length=100)
+    push_token = models.TextField()
     email = models.CharField(max_length=100)
     profile_image = models.FileField(upload_to="profilePic",blank=True)
     accept_shared_baskets = models.BooleanField(default=True)

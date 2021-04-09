@@ -112,8 +112,9 @@ def createAccount(request):
     email = request.POST.get("email")
     mobile = request.POST.get("mobile")
     user_id = request.POST.get("user_id")
+    push_token = request.POST.get("push_token")
 
-    new_user = userAccount(user_id=user_id,name=name, email=email,mobile_number=mobile)
+    new_user = userAccount(user_id=user_id,name=name, email=email,mobile_number=mobile,push_token=push_token)
     new_user.save()
     return JsonResponse({"response":"account created"})
 
