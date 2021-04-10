@@ -89,6 +89,29 @@ def getTrends(userId):
 
     return posts_array
 
+@csrf_exempt
+def addView(request):
+    post_id = request.POST.get("postId")
+    user_id = request.POST.get("userId")
+    # 
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_post = post.objects.get(id=post_id)
+
+    # check if view already exists
+    view_exists = postView.objects.filter(user=get_user,post=get_post).exists()
+    if view_exists == False:
+        new_view = postView()
+        new_view.user = get_user
+        new_view.post = get_post
+        new_view.save()
+
+    # get count
+    view_count = postView.objects.filter(post=get_post,user=get_user).count()
+
+    return JsonResponse({"views_count":view_count})
+
+    
+
 
 # get default search page brands
 def getSearchPageData(request):
