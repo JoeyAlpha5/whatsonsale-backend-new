@@ -24,6 +24,7 @@ class brand(models.Model):
     category = models.CharField(max_length=50, choices=category_choices, default="")
     logo = models.URLField()
     website = models.URLField()
+    firebase_id = models.TextField()
     objects = models.Manager()
     def __str__(self):
         return self.name
@@ -36,7 +37,6 @@ class post(models.Model):
     brand = models.ForeignKey(brand, on_delete=models.CASCADE, default="")
     date = models.DateTimeField(auto_now_add=True )
     active = models.BooleanField(default=True)
-    firebase_id = models.TextField()
     objects = models.Manager()
     def __str__(self):
         return self.title
