@@ -463,3 +463,18 @@ def addComment(request):
 def userExists(userId):
     user_exists = userAccount.objects.filter(user_id=userId).exists()
     return user_exists
+
+
+# brands
+def getBrandPosts(request):
+    brand_id = request.GET["brandId"]
+    get_brand = brand.objects.get(firebase_id=brand_id)
+    # 
+    get_posts = post.objects.filter(brand=get_brand)
+    posts_array = []
+
+    for item in get_posts:
+        post_data = {"image":item.post_cover,"data":item.date,"title":item.title}
+        posts_array.append(post_data)
+
+    return JsonResponse({"data":posts_array})
