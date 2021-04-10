@@ -36,6 +36,7 @@ class post(models.Model):
     brand = models.ForeignKey(brand, on_delete=models.CASCADE, default="")
     date = models.DateTimeField(auto_now_add=True )
     active = models.BooleanField(default=True)
+    firebase_id = models.TextField()
     objects = models.Manager()
     def __str__(self):
         return self.title
