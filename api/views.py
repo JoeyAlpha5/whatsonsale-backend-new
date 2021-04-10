@@ -398,6 +398,38 @@ def getComments(request):
     return JsonResponse({"data":comments_array})
 
 
+# post comments
+@csrf_exempt
+def addComment(request):
+    user_id = request.POST.get("userId")
+    post_id = request.POST.get("postId")
+    comment = request.POST.get("commentInput")
+
+    # get post and user
+    get_user = userAccount.objects.get(user_id=user_id)
+    get_post = post.objects.get(id=post_id)
+    # 
+    new_comment = postComment()
+    new_comment.user = get_user
+    new_comment.post = get_post
+    new_comment.comment = comment
+    new_comment.save()
+
+    # get comments
+    get_comments = postComment.objects.filter(post=get_post)
+    comments_array = []
+    for comment in get_comments:
+        comment_data = {"user":comment.user.name,"comment":comment.comment}
+        comments_array.append(comment_data)
+
+    return JsonResponse({"data":comments_array})
+    
+
+
+
+
+
+
 
 # send notification
 
