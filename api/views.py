@@ -12,7 +12,6 @@ def getFeed(request):
     brands_followed = userFollowing.objects.filter(user=get_user)
     followed_brands = []
     posts_array = []
-    comments_array = []
     # push array of followed brands
     for following in brands_followed:
         followed_brands.append(following.brand)
@@ -35,10 +34,13 @@ def getFeed(request):
             post_catalogue = []
 
         # get the first comment if comments exist
+        comments_array = []
+
         if post_comments_count > 0:
             first_comment = postComment.objects.filter(post=item)[:1]
             comment_data = {"user":first_comment[0].user.name,"comment":first_comment[0].comment}
             comments_array.append(comment_data)
+
 
 
         # get brand data
