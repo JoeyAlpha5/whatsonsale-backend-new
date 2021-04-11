@@ -466,7 +466,7 @@ def userExists(userId):
 
 
 # brands
-def getBrandPosts(request):
+def getWebBrandPosts(request):
     brand_id = request.GET["brandId"]
     get_brand = brand.objects.get(firebase_id=brand_id)
     # 
@@ -478,3 +478,37 @@ def getBrandPosts(request):
         posts_array.append(post_data)
 
     return JsonResponse({"data":posts_array})
+
+# add new post
+@csrf_exempt
+def addNewPost(request):
+    brand_id = request.POST.get("brandId")
+    post_title = request.POST.get("postTitle")
+    post_description = request.POST.get("postDescription")
+    post_file = request.POST.get("postFile")
+    is_video = request.POST.get("isVideo")
+    # 
+    get_brand = brand.objects.get(firebase_id=brand_id)
+
+    # 
+    new_post = post()
+    new_post.brand = get_brand
+    new_post.title = post_title
+    new_post.description = post_description
+    new_post.video = is_video
+    new_post.post_cover = post_file
+    new_post.save()
+
+    if is_video == True:
+        post_video = request.POST.get("video_location")
+        new_catalogue = postCatalogue()
+        new_catalogue.post = new_post
+        new_catalogue.image = post_video
+
+    return JsonResponse({"data":"uploaded"})
+
+# add new product
+
+# add new slide
+
+# update account
