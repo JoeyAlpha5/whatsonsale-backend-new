@@ -490,6 +490,10 @@ def addNewPost(request):
     # 
     get_brand = brand.objects.get(firebase_id=brand_id)
 
+    if is_video == "true":
+        is_video = True
+    else:
+        is_video = False
     # 
     new_post = post()
     new_post.brand = get_brand
@@ -504,6 +508,7 @@ def addNewPost(request):
         new_catalogue = postCatalogue()
         new_catalogue.post = new_post
         new_catalogue.image = post_video
+        new_catalogue.save()
 
     return JsonResponse({"data":"uploaded"})
 
