@@ -78,13 +78,21 @@ def getTrends(userId):
         else:
             post_catalogue = []
 
+        
+        # get the first comment if comments exist
+        comments_array = []
+        if post_comments_count > 0:
+            first_comment = postComment.objects.filter(post=item)[:1]
+            comment_data = {"user":first_comment[0].user.name,"comment":first_comment[0].comment}
+            comments_array.append(comment_data)
+
         # get brand data
         brand = item.brand
         followers_count = userFollowing.objects.filter(brand=brand).count()
         post_count = post.objects.filter(brand=brand).count()
         brand_object = {"id":brand.id,"name":brand.name, "description":brand.description, "category":brand.category,"logo":brand.logo, "website":brand.website,"following":True,"post_count":post_count,"follower_count":followers_count}
 
-        post_data = { "post":{"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":item.brand.id,"date":item.date,"catalogue":post_catalogue},"brand":brand_object}
+        post_data = { "post":{"postId":item.id,"user_liked_post":user_liked_post,"post_catalogue_count":post_catalogue_count,"products_count":post_products_count,"likes_count":post_likes_count,"views_count":post_views_count,"comments_count":post_comments_count,"title":item.title,"cover":item.post_cover,"is_video":item.video,"description":item.description,"brand_id":item.brand.id,"date":item.date,"catalogue":post_catalogue},"brand":brand_object,"comments":comments_array}
         posts_array.append(post_data)
 
     return posts_array
