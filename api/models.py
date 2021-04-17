@@ -1,6 +1,6 @@
 from django.db import models
 from datetime import datetime
-category_choices = [("Clothing","Clothing"), ("Home Care", "Home Care"), ("Electronics", "Electronics"),("Food","Food"),("Cosmetics","Cosmetics"),("Furniture", "Furniture")]
+category_choices = [("Clothing","Clothing"), ("Home Care", "Home Care"), ("Electronics", "Electronics"),("Food","Food"),("Cosmetics","Cosmetics"),("Furniture", "Furniture"),("Beverages","Beverages")]
 product_choices = [("---", "---"),("Denim","Denim"), ("Food", "Food"), ("Jackets", "Jackets"), ("Sneakers", "Sneakers"),("Bags","Bags"),("T-shirt","T-shirt"),("Shoes","Shoes"),("Electronics","Electronics")]
 # Create your models here.
 
