@@ -41,6 +41,15 @@ class post(models.Model):
     def __str__(self):
         return self.title
 
+class newsPost(models.Model):
+    title = models.CharField(max_length=50) 
+    news_cover = models.URLField()
+    description = models.CharField(max_length=150)
+    date = models.DateTimeField(auto_now_add=True )
+    objects = models.Manager()
+    def __str__(self):
+        return self.title
+
 class postCatalogue(models.Model):
     post = models.ForeignKey(post, on_delete=models.CASCADE)
     image = models.URLField()
@@ -68,6 +77,14 @@ class postLike(models.Model):
     def __str__(self):
         return self.user.name
 
+class newsLike(models.Model):
+    user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
+    post = models.ForeignKey(newsPost, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now)
+    objects = models.Manager()
+    def __str__(self):
+        return self.user.name
+
 class postView(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     post = models.ForeignKey(post, on_delete=models.CASCADE)
@@ -76,9 +93,26 @@ class postView(models.Model):
     def __str__(self):
         return self.user.name
 
+class newsView(models.Model):
+    user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
+    post = models.ForeignKey(newsPost, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now)
+    objects = models.Manager()
+    def __str__(self):
+        return self.user.name
+
 class postComment(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
     post = models.ForeignKey(post, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=datetime.now)
+    comment = models.CharField(max_length=150)
+    objects = models.Manager()
+    def __str__(self):
+        return self.user.name
+
+class newsComment(models.Model):
+    user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
+    post = models.ForeignKey(newsPost, on_delete=models.CASCADE)
     date = models.DateTimeField(default=datetime.now)
     comment = models.CharField(max_length=150)
     objects = models.Manager()
@@ -94,15 +128,6 @@ class userFollowing(models.Model):
     def __str__(self):
         return self.user.name
 
-class news(models.Model):
-    news_headline = models.CharField(max_length=150)
-    news_description = models.TextField()
-    news_video = models.CharField(max_length=150)
-    news_image = models.DateTimeField(default=datetime.now)
-    news_date = models.DateTimeField(auto_now_add=True )
-    objects = models.Manager()
-    def __str__(self):
-        return self.news_headline
 
 class basket(models.Model):
     user = models.ForeignKey(userAccount, on_delete=models.CASCADE)
